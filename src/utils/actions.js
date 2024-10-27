@@ -20,26 +20,22 @@ export async function uploadToGemini(path, mimeType) {
 }
 
 export async function waitForFilesActive(files) {
-  let processing;
+  console.log(files);
   try {
     console.log("Waiting for file processing...");
-    processing = "start";
     for (const name of files.map((file) => file.name)) {
       let file = await fileManager.getFile(name);
       while (file.state === "PROCESSING") {
         process.stdout.write(".");
         await new Promise((resolve) => setTimeout(resolve, 10_000));
         file = await fileManager.getFile(name);
-        processing = "processing";
         console.log("waitForFilesActive", file);
       }
       if (file.state !== "ACTIVE") {
         throw Error(`File ${file.name} failed to process`);
       }
     }
-    console.log("...all files ready");
-    processing = "end";
-    return processing;
+    console.log("...all files ready\n");
   } catch (error) {
     console.log(error);
   }

@@ -10,13 +10,17 @@ import axios from "axios";
 import { PlusCircle } from "lucide-react";
 import React, { useState, useRef, useEffect } from "react";
 import { UploadButton } from "./UploadButton";
+import usechatStore from "@/lib/linkStore";
+import { ChatCollection } from "./ChatCollection";
+import { ClearAlert } from "./ClearAlert";
 
 const HomePage = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [prompt, setPrompt] = useState("");
   const [focusText, setFocusText] = useState(false);
   const [videoURL, setVideoURL] = useState("");
-  const [historyData, setHistoryData] = useState([]);
+  const [vidStatus, setVidStatus] = useState(false)
+  const { addNewChat, chatHistory, clearChat } = usechatStore((state) => state)
 
   const [uploadStatus, setUploadStatus] = useState("idle"); // 'idle', 'uploading', 'success', 'error'
   const inputRef = useRef(null);
@@ -49,32 +53,6 @@ const HomePage = () => {
     }
   };
 
-  const [dragging, setDragging] = useState(false);
-
-  const handleDragOver = (e) => {
-    e.preventDefault();
-    setDragging(true);
-  };
-
-  const handleDragLeave = (e) => {
-    setDragging(false);
-  };
-
-  const handleDrop = (e) => {
-    e.preventDefault();
-    setDragging(false);
-
-    const file = e.dataTransfer.files[0];
-    setSelectedFile(file);
-    setVideoURL(URL.createObjectURL(file));
-    // console.log(file);
-  };
-
-  const handleRemoveFile = () => {
-    setSelectedFile(null);
-    setVideoURL("");
-    setUploadStatus("");
-  };
 
   // console.log("file", selectedFile);
   // console.log(focusText);
@@ -94,11 +72,12 @@ const HomePage = () => {
     responseMimeType: "text/plain",
   };
 
-  const [uploadProgress, setUploadProgress] = useState(0);
+
   const [uploadMessage, setUploadMessage] = useState("");
   const [uploadData, setUploadData] = useState(null);
+  const [generating, setGenerating] = useState(false)
 
-  // console.log(uploadMessage, uploadProgress);
+  // console.log(uploadMessage);
 
   const uploadVideo = async () => {
     const formData = new FormData();
@@ -119,28 +98,27 @@ const HomePage = () => {
           `File uploaded successfully! Access it at ${response.data.path}`
         );
 
-        setUploadData(response.data);
         const data = await uploadToGemini(
           response.data.path,
           response.data.type
-        );
-
+        )
         console.log(data);
+        setUploadData(data);
+        // await waitForFilesActive([data])
+
         setUploadStatus("success");
-        // setHistoryData((prev) => [
-        //   ...prev,
-        //   {
-        //     role: "user",
-        //     parts: [
-        //       {
-        //         fileData: {
-        //           mimeType: files[0].mimeType,
-        //           fileUri: files[0].uri,
-        //         },
-        //       },
-        //     ],
-        //   },
-        // ]);
+        addNewChat({
+          role: "user",
+          parts: [
+            {
+              fileData: {
+                mimeType: data.mimeType,
+                fileUri: data.uri,
+              },
+            },
+          ],
+        },
+        );
       } else {
         setUploadMessage("Upload failed.");
         setUploadStatus("error");
@@ -151,7 +129,7 @@ const HomePage = () => {
     }
   };
 
-  console.log(historyData);
+  console.log(chatHistory);
 
   useEffect(() => {
     if (selectedFile !== null) {
@@ -161,145 +139,107 @@ const HomePage = () => {
 
   async function handleSubmit(e) {
     e.preventDefault();
-
-    if (!selectedFile) return alert("Please select a video");
+    setGenerating(true)
+    // if (!selectedFile) return alert("Please select a video");
     if (!prompt) return alert("Please enter prompt");
 
     try {
-      setPrompt(" ");
+      setPrompt("");
       const chatSession = model.startChat({
         generationConfig,
-        history: historyData,
+        history: chatHistory,
       });
 
-      setHistoryData((prev) => [
-        ...prev,
-        {
-          role: "user",
-          parts: [{ text: prompt }],
-        },
-      ]);
+      addNewChat({
+        role: "user",
+        parts: [{ text: prompt }],
+      });
 
       const result = await chatSession.sendMessage(prompt);
-      console.log(result.response.text());
-      setHistoryData((prev) => [
-        ...prev,
-        {
-          role: "model",
-          parts: [{ text: result.response.text() }],
-        },
-      ]);
+      // console.log(result.response.text());
+      addNewChat({
+        role: "model",
+        parts: [{ text: result.response.text() }],
+      },)
+      window.scrollTo(0, document.body.scrollHeight);
+      setGenerating(false)
     } catch (error) {
       return alert("Something went wrong");
     }
   }
 
+  // useEffect(() => {
+  //   const handleKeyPress = (event) => {
+  //     if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
+  //       if (!prompt) return alert("Please enter prompt");
+  //       handleSubmit();
+  //     }
+  //   };
+
+  //   document.addEventListener('keydown', handleKeyPress);
+
+  //   return () => {
+  //     document.removeEventListener('keydown', handleKeyPress);
+  //   };
+  // }, [prompt]);
+
   return (
-    // <div className="flex justify-center items-center flex-col h-screen">
-    //   <h1 className="font-bold text-3xl py-3">
-    //     Upload video and ask questions.
-    //   </h1>
+    <>
+      <div className="min-h-[calc(100vh-80px)] lg:min-h-[100vh] flex-1 rounded-xl md:min-h-min py-3 relative">
+        <div className="w-full h-full flex gap-2  px-4 ">
 
-    //   <form
-    //     onSubmit={handleSubmit}
-    //     className="bg-white/10  backdrop-blur-lg rounded-xl p-5 w-1/2 flex justify-center items-center flex-col "
-    //   >
-    //     {selectedFile == null && (
-    //       <div
-    //         onDragOver={handleDragOver}
-    //         onDrop={handleDrop}
-    //         onDragLeave={handleDragLeave}
-    //         className={`w-full h-40 rounded-xl flex items-center justify-center cursor-pointer
-    //         ${dragging ? "bg-white/20" : "bg-white/10 hover:bg-white/15"}`}
-    //       >
-    //         <input
-    //           type="file"
-    //           id="video"
-    //           accept="video/*"
-    //           hidden
-    //           onChange={handleFileChange}
-    //           ref={inputRef}
-    //         />
-    //         <label
-    //           htmlFor="video"
-    //           className="w-full relative h-full rounded-xl flex justify-center items-center z-10 cursor-pointer"
-    //         >
-    //           {dragging
-    //             ? "Release to upload"
-    //             : "Click or drag a video here to upload"}
-    //         </label>
-    //       </div>
-    //     )}
-    //     {/* {selectedFile !== null && ( */}
-    //     <VideoPreview
-    //       videoURL={selectedFile}
-    //       onRemove={() => setSelectedFile(null)}
-    //       uploadStatus={uploadStatus}
-    //     />
-    //     {/* )} */}
-    //     <div className="py-3 w-full">
-    //       <input
-    //         autoFocus={focusText}
-    //         value={prompt}
-    //         onChange={(e) => setPrompt(e.target.value)}
-    //         placeholder="e.g. summarize this video"
-    //         className="rounded-md w-full p-2 text-black"
-    //       />
-    //     </div>
-    //     <div className="pt-3 flex gap-4 justify-center items-center w-full">
-    //       <button
-    //         type="submit"
-    //         // onClick={handleSubmit}
-    //         disabled={uploadStatus == "uploading"}
-    //         className="bg-black rounded-xl p-2 hover:bg-black/50 "
-    //       >
-    //         {uploadStatus === "uploading" ? "Uploading Video..." : "Proceed"}
-    //       </button>
-    //     </div>
-    //   </form>
-    // </div>
-    <div className="min-h-[calc(100vh-80px)] lg:min-h-[100vh] flex-1 rounded-xl md:min-h-min py-3 relative">
-      <div className="w-full h-full flex gap-2 justify-center items-center px-4 ">
-        <div className="absolute bottom-0 left-0 flex flex-col justify-center items-center w-full p-4 gap-1">
-          {/* <div className="rounded-full w-full  ">
-            <div className="w-full sm:w-[80%] bg-muted h-40 rounded-3xl animate-in fade-in-0 zoom-in-95" >
+          <ChatCollection chatHistory={chatHistory} />
 
-            </div>
-          </div> */}
-
-          <div className="flex gap-1 justify-center items-center w-full">
-            <div className="bg-muted/50 rounded-full flex justify-center items-center gap-1 w-full overflow-hidden py-2 px-2">
-              <input
-                autoFocus={focusText}
-                value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
-                placeholder="e.g. summarize this video"
-                className=" bg-transparent w-full p-2 text-sm outline-none focus:outline-none ring-0 focus:ring-0"
-              />
-              <div className="flex gap-1">
-                <UploadButton handleFileChange={handleFileChange} />
-                <Button variant="secondary" className="rounded-full">
-                  Run
-                </Button>
-              </div>
-            </div>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild >
-                  <button className="hidden sm:flex rounded-full p-2 hover:bg-muted bg-muted">
-                    <ReloadIcon />
-                  </button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Clear</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-
-          </div>
         </div>
       </div>
-    </div>
+
+      {/* --------Search Bar----------- */}
+      <div className="sticky bottom-0 left-0 bg-background z-40 flex flex-col justify-center items-center w-full p-4 gap-1">
+        {uploadStatus === 'uploading' && <div className="rounded-full w-full  ">
+          <div className="w-60 h-32 bg-muted  rounded-3xl animate-in fade-in-0 zoom-in-95" >
+            <div className="flex justify-center items-center flex-col w-full h-full">
+              <div className="animate-spin rounded-full border-4 border-t-transparent border-primary/80 w-10 h-10"></div>
+              <p className="text-sm text-primary/80 pt-2 ">Uploading...</p>
+            </div>
+          </div>
+        </div>}
+        {uploadStatus === 'success' && <div className="rounded-full w-full  ">
+          <div className="w-60 h-fit bg-muted  rounded-3xl animate-in fade-in-0 zoom-in-95 p-2 bg-green-600" >
+            <div className="flex justify-center items-center flex-col w-full h-full text-sm">
+              Uploaded succesfully 🎉🎉..
+            </div>
+          </div>
+        </div>}
+
+        <div className="flex gap-1 justify-center items-center w-full">
+          <div className="bg-muted/50 rounded-full flex justify-center items-center gap-1 w-full overflow-hidden py-2 px-2">
+            <input
+              autoFocus={focusText}
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              placeholder="e.g. summarize this video"
+              className=" bg-transparent w-full p-2 text-sm outline-none focus:outline-none ring-0 focus:ring-0"
+            />
+            <div className="flex gap-1">
+              {uploadStatus !== 'uploading' && <UploadButton handleFileChange={handleFileChange} />}
+              {!generating ? <Button disabled={uploadStatus == 'uploading'} variant="secondary" className="rounded-full hover:bg-foreground hover:text-secondary"
+                onClick={handleSubmit}>
+                Run
+              </Button> : <div className=" flex justify-center items-center gap-1 bg-muted/80 px-2 py-0 rounded-2xl">
+                <div class="w-1 h-2 animate-in fade-in animate-pulse repeat-infinite ease-in-out delay-0 duration-500 bg-white rounded-full"></div>
+                <div class="w-1 h-2 animate-in fade-in animate-pulse repeat-infinite ease-in-out delay-75 duration-500 bg-white rounded-full"></div>
+                <div class="w-1 h-2 animate-in fade-in animate-pulse repeat-infinite ease-in-out delay-150 duration-500 bg-white rounded-full"></div>
+                <div class="w-1 h-2 animate-in fade-in animate-pulse repeat-infinite ease-in-out delay-200 duration-500 bg-white rounded-full"></div>
+              </div>}
+            </div>
+          </div>
+
+          {/* //clear */}
+          <ClearAlert clearChat={clearChat} />
+
+        </div>
+      </div>
+    </>
   );
 };
 
