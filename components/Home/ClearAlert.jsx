@@ -17,7 +17,7 @@ export function ClearAlert({ clearChat }) {
     return (
         <AlertDialog>
             <AlertDialogTrigger asChild>
-                <div>
+                <div className="h-[60px] flex justify-center items-end pb-2">
                     <TooltipProvider>
                         <Tooltip>
                             <TooltipTrigger asChild >
@@ -37,12 +37,12 @@ export function ClearAlert({ clearChat }) {
                     <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                     <AlertDialogDescription>
                         This action cannot be undone. This will permanently delete your
-                        chat and remove your data from history.
+                        chat and remove from history.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={clearChat} >Continue</AlertDialogAction>
+                    <AlertDialogAction onClick={clearChat} className="text-primary bg-destructive/80 hover:bg-destructive/60">Continue</AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog >
