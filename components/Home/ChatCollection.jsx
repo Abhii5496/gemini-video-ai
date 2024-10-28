@@ -5,8 +5,6 @@ import { marked } from "marked";
 import React, { Fragment, useEffect, useRef } from "react";
 
 export const ChatCollection = ({ chatHistory, status }) => {
-  const prose =
-    "prose prose-strong:text-neutral-300 text-neutral-300 text-sm prose:w-full w-full prose-code:text-neutral-300 prose-pre:text-pretty prose-a:text-blue-500";
   const messagesEndRef = useRef(null);
   useEffect(() => {
     if (messagesEndRef.current) {
@@ -36,7 +34,7 @@ export const ChatCollection = ({ chatHistory, status }) => {
                     {chat.role}
                   </p>
                   <div
-                    className={clsx(prose)}
+                    className="prose prose-strong:text-neutral-300 text-neutral-300 text-sm prose:w-full w-full prose-code:text-neutral-300 prose-pre:text-pretty prose-a:text-blue-500"
                     dangerouslySetInnerHTML={{
                       __html: DOMPurify.sanitize(
                         marked.parse(chat.parts[0].text || "")
@@ -64,7 +62,7 @@ export const ChatCollection = ({ chatHistory, status }) => {
                   {chat.role}
                 </p>
                 <div
-                  className={clsx(prose)}
+                  className="prose prose-strong:text-neutral-300 text-neutral-300 text-sm prose:w-full w-full prose-code:text-neutral-300 prose-pre:text-pretty prose-a:text-blue-500"
                   dangerouslySetInnerHTML={{
                     __html: DOMPurify.sanitize(
                       marked.parse(chat.parts[0].text || "")

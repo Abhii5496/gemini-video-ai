@@ -22,3 +22,5 @@ export async function POST(request) {
 
   return NextResponse.json({ success: true, path, type, filename: file.name });
 }
+
+export const dynamic = "force-dynamic";
