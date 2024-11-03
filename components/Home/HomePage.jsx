@@ -1,5 +1,9 @@
 "use client";
-import { uploadToGemini, waitForFilesActive } from "@/src/utils/actions";
+import {
+  newUploadGemini,
+  uploadToGemini,
+  waitForFilesActive,
+} from "@/src/utils/actions";
 import VideoPreview from "@/components/VideoPreview";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import axios from "axios";
@@ -9,6 +13,8 @@ import usechatStore from "@/lib/store";
 import { ChatCollection } from "./ChatCollection";
 import { ClearAlert } from "./ClearAlert";
 import { SendButton } from "./SendButton";
+import { compressImageToBase64, convertVideoToBase64 } from "@/lib/helper";
+import { useChat } from "ai/react";
 
 const HomePage = () => {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -23,9 +29,24 @@ const HomePage = () => {
     model: genAiModel,
   } = usechatStore((state) => state);
 
+  const { messages, input, handleSubmit, handleInputChange, isLoading } =
+    useChat({ api: "/api/generate-content" });
+
+  console.log(messages, input, isLoading);
+
   const [uploadStatus, setUploadStatus] = useState("idle"); // 'idle', 'uploading', 'success', 'error'
+  const [base64Data, setBase64Data] = useState("");
+  const [mimeType, setMimeType] = useState("");
   const inputRef = useRef(null);
-  const fileType = [
+  const ImgfileType = [
+    "image/png",
+    "image/jpeg",
+    "image/webp",
+    "image/heic",
+    "image/heif",
+  ];
+
+  const vidFileType = [
     "video/mp4",
     "video/mpeg",
     "video/mov",
@@ -37,6 +58,10 @@ const HomePage = () => {
     "video/3gpp",
   ];
 
+  const isPdfFile = (file) => ["application/pdf"].includes(file.type);
+  const isImageFile = (file) => ImgfileType.includes(file.type);
+  const isvidFile = (file) => vidFileType.includes(file.type);
+
   const checkFileType = (file) => {
     if (!file) throw new Error("Please select a file");
     const isValidType = fileType.includes(file.type);
@@ -44,13 +69,39 @@ const HomePage = () => {
     return isValidType;
   };
 
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
+  const handleFileChange = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    setBase64Data("");
+    setMimeType(file.type);
     // console.log(checkFileType(file));
-    if (checkFileType(file)) {
-      setSelectedFile(file);
-      setFocusText(true);
-      setVideoURL(URL.createObjectURL(file));
+    // if (checkFileType(file)) {
+    //   setSelectedFile(file);
+    //   setFocusText(true);
+    //   setVideoURL(URL.createObjectURL(file));
+    // }
+    if (isPdfFile(file)) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const fileContent = reader.result;
+        console.log(fileContent);
+        setBase64Data(fileContent);
+      };
+      reader.readAsDataURL(file);
+    }
+
+    if (isImageFile(file)) {
+      // console.log("compressig");
+      const cImg = await compressImageToBase64(file, 0.1);
+      // console.log(cImg);
+      setBase64Data(cImg);
+    }
+    if (isvidFile(file)) {
+      console.log("compressig");
+
+      const vidBase64 = await convertVideoToBase64(file);
+      console.log(vidBase64);
+      setBase64Data(vidBase64);
     }
   };
 
@@ -67,131 +118,122 @@ const HomePage = () => {
   // console.log("file", selectedFile);
   // console.log(focusText);
 
-  const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
-  const genAI = new GoogleGenerativeAI(apiKey);
-
-  const model = genAI.getGenerativeModel({
-    model: genAiModel || "gemini-1.5-flash",
-  });
-
-  const generationConfig = {
-    temperature: 1.15,
-    topP: 0.95,
-    topK: 64,
-    maxOutputTokens: 8192,
-    responseMimeType: "text/plain",
-  };
-
   const [uploadMessage, setUploadMessage] = useState("");
   const [uploadData, setUploadData] = useState(null);
   const [generating, setGenerating] = useState(false);
 
   // console.log(uploadMessage);
 
-  const uploadVideo = async () => {
-    const formData = new FormData();
-    formData.set("file", selectedFile);
-    formData.set("mimeType", selectedFile.type);
+  // const uploadVideo = async () => {
+  //   const formData = new FormData();
+  //   formData.set("file", selectedFile);
+  //   formData.set("mimeType", selectedFile.type);
 
-    setUploadStatus("uploading");
-    try {
-      const response = await axios.post("/api/uploadFile", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+  //   setUploadStatus("uploading");
+  //   try {
+  //     const response = await axios.post("/api/uploadFile", formData, {
+  //       headers: {
+  //         "Content-Type": "multipart/form-data",
+  //       },
+  //     });
 
-      if (response.status === 200) {
-        // console.log(response.data);
-        setUploadMessage(
-          `File uploaded successfully! Access it at ${response.data.path}`
-        );
+  //     if (response.status === 200) {
+  //       // console.log(response.data);
+  //       setUploadMessage(
+  //         `File uploaded successfully! Access it at ${response.data.path}`
+  //       );
 
-        const data = await uploadToGemini(
-          response.data.path,
-          response.data.type
-        );
-        // console.log(data);
-        setUploadData(data);
-        await waitForFilesActive([data]);
+  //       const data = await uploadToGemini(
+  //         response.data.path,
+  //         response.data.type
+  //       );
+  //       // console.log(data);
+  //       setUploadData(data);
+  //       await waitForFilesActive([data]);
 
-        setUploadStatus("success");
-        addNewChat({
-          role: "user",
-          parts: [
-            {
-              fileData: {
-                mimeType: data.mimeType,
-                fileUri: data.uri,
-              },
-            },
-          ],
-        });
-      } else {
-        setUploadMessage("Upload failed.");
-        setUploadStatus("error");
-      }
-    } catch (error) {
-      setUploadMessage(`Upload error: ${error.message}`);
-      setUploadStatus("error");
-    }
-  };
+  //       setUploadStatus("success");
+  //       addNewChat({
+  //         role: "user",
+  //         parts: [
+  //           {
+  //             fileData: {
+  //               mimeType: data.mimeType,
+  //               fileUri: data.uri,
+  //             },
+  //           },
+  //         ],
+  //       });
+  //     } else {
+  //       setUploadMessage("Upload failed.");
+  //       setUploadStatus("error");
+  //     }
+  //   } catch (error) {
+  //     setUploadMessage(`Upload error: ${error.message}`);
+  //     setUploadStatus("error");
+  //   }
+  // };
 
   // console.log(chatHistory);
 
-  useEffect(() => {
-    if (selectedFile !== null) {
-      uploadVideo();
-    }
-  }, [selectedFile]);
+  // useEffect(() => {
+  //   if (selectedFile !== null) {
+  //     uploadVideo();
+  //   }
+  // }, [selectedFile]);
 
-  async function handleSubmit(e) {
-    // if (!selectedFile) return alert("Please select a video");
-    setUploadStatus("idle");
-    if (!prompt) {
-      alert("Please enter prompt");
-      return;
-    }
-
-    if (generating) return;
-
-    try {
-      setGenerating(true);
-      setPrompt("");
-      const chatSession = model.startChat({
-        generationConfig,
-        history: chatHistory,
-      });
-
-      addNewChat({
-        role: "user",
-        parts: [{ text: prompt }],
-      });
-
-      // const result = await chatSession.sendMessage(prompt);
-      const result = await chatSession.sendMessageStream(prompt);
-
-      // console.log(result.response.text());
-
-      let newText = "";
-
-      for await (const chunk of result.stream) {
-        const chunkText = chunk.text();
-        newText += chunkText;
-        // window.scrollTo(0, document.body.scrollHeight);
-      }
-      addNewChat({
-        role: "model",
-        parts: [{ text: newText }],
-      });
-      // console.log("after", newText);
-      setGenerating(false);
-    } catch (error) {
-      console.log(error);
-      setGenerating(false);
-      return alert("Something went wrong");
-    }
-  }
+  // async function handleSubmit(e) {
+  //   // if (!selectedFile) return alert("Please select a video");
+  //   // setUploadStatus("idle");
+  //   // if (!prompt) {
+  //   //   alert("Please enter prompt");
+  //   //   return;
+  //   // }
+  //   // if (generating) return;
+  //   // try {
+  //   // setGenerating(true);
+  //   // setPrompt("");
+  //   // const chatSession = model.startChat({
+  //   //   generationConfig,
+  //   //   history: chatHistory,
+  //   // });
+  //   // addNewChat({
+  //   //   role: "user",
+  //   //   parts: [{ text: prompt }],
+  //   //   file: base64Data,
+  //   // });
+  //   // const result = await chatSession.sendMessage(prompt);
+  //   //   const result = await chatSession.sendMessageStream(prompt);
+  //   //   // console.log(result.response.text());
+  //   //   let newText = "";
+  //   //   for await (const chunk of result.stream) {
+  //   //     const chunkText = chunk.text();
+  //   //     newText += chunkText;
+  //   //     // window.scrollTo(0, document.body.scrollHeight);
+  //   //   }
+  //   //   addNewChat({
+  //   //     role: "model",
+  //   //     parts: [{ text: newText }],
+  //   //   });
+  //   //   // console.log("after", newText);
+  //   //   setGenerating(false);
+  //   // } catch (error) {
+  //   //   console.log(error);
+  //   //   setGenerating(false);
+  //   //   return alert("Something went wrong");
+  //   // }
+  //   // try {
+  //   //   const res = await axios.post("api/generate-content", {
+  //   //     base64: base64Data,
+  //   //     type: mimeType,
+  //   //     history: chatHistory,
+  //   //     genAiModel: genAiModel,
+  //   //     prompt,
+  //   //   });
+  //   //   console.log(res.data);
+  //   // } catch (error) {
+  //   //   console.log(error);
+  //   // }
+  // }
 
   useEffect(() => {
     const handleKeyPress = (event) => {
@@ -211,16 +253,18 @@ const HomePage = () => {
     };
   }, [prompt]);
 
+  // console.log(chatHistory);
+
   return (
     <>
-      <div className="min-h-[calc(100vh-80px)] lg:min-h-[100vh] flex-1 rounded-xl md:min-h-min py-3 relative">
+      <div className="h-[calc(100svh-80px)] sm:min-h-[calc(100vh-80px)] flex-1 rounded-xl md:min-h-min py-3 relative   ">
         <div className="w-full h-full flex gap-2  px-4 ">
           <ChatCollection chatHistory={chatHistory} status={generating} />
         </div>
       </div>
 
       {/* --------Search Bar----------- */}
-      <div className="sticky bottom-0 left-0 bg-background z-40 flex flex-col justify-center items-center w-full p-4 gap-1">
+      <div className="sticky bottom-0    left-0 bg-background z-40 flex flex-col justify-center items-center w-full p-4 gap-1">
         {uploadStatus === "uploading" && (
           <div className="rounded-full w-full  ">
             <div className="w-60 h-32 bg-muted  rounded-3xl animate-in fade-in-0 zoom-in-95">
@@ -247,8 +291,8 @@ const HomePage = () => {
               <textarea
                 ref={textareaRef}
                 autoFocus={focusText}
-                value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
+                value={input}
+                onChange={handleInputChange}
                 placeholder="e.g. summarize this video"
                 className="min-h-[35px] max-h-[200px]  w-full resize-none
                 bg-transparent p-2 text-sm outline-none focus:outline-none ring-0 focus:ring-0

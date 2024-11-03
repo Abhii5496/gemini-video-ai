@@ -11,15 +11,16 @@ export function UploadButton({ handleFileChange }) {
   return (
     <TooltipProvider>
       <Tooltip>
-        <TooltipTrigger asChild >
+        <TooltipTrigger asChild>
           <div className="h-full flex justify-center items-center p-1.5 hover:bg-accent hover:text-accent-foreground rounded-full">
             <input
               type="file"
               id="video"
-              accept="video/*"
+              // accept="video/*"
+              accept="image/png ,image/jpeg,image/webp,image/heic,image/heif,application/pdf, video/*"
               hidden
               onChange={handleFileChange}
-            //   ref={inputRef}
+              //   ref={inputRef}
             />
             <label
               htmlFor="video"
