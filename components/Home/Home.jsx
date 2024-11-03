@@ -76,7 +76,8 @@ const Home = () => {
     }
   }, [input]);
 
-  console.log(messages);
+  // console.log(messages);
+  // console.log(files);
 
   return (
     <>
@@ -108,7 +109,7 @@ const Home = () => {
                   ></path>
                 </svg>
               </div>
-              <p className="text-sm text-center">math.png</p>
+              <p className="text-sm text-center">{files[0].name}</p>
             </div>
           </div>
         )}

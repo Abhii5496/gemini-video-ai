@@ -22,7 +22,7 @@ export function ClearAlert({ clearChat }) {
   return (
     <AlertDialog className="w-full">
       <AlertDialogTrigger asChild>
-        <div className="h-[60px] flex justify-center items-end pb-2">
+        <div className="flex justify-center items-end pb-2">
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>

@@ -17,7 +17,7 @@ export function UploadButton({ handleFileChange, fileInputRef, setFiles }) {
               type="file"
               id="video"
               // accept="video/*"
-              accept="image/png ,image/jpeg,image/webp,image/heic,image/heif,application/pdf, video/*"
+              accept="image/png ,image/jpeg,image/webp,image/heic,image/heif,application/pdf"
               hidden
               onChange={(event) => {
                 if (event.target.files) {

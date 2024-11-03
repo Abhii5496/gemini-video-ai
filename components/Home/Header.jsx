@@ -8,7 +8,7 @@ export default function Header({ setMessages, isLoading }) {
         <p className="text-sm text-sidebar-primary-foreground py-3">
           Start your journey with G-Alpha
         </p>
-        <div className="flex sm:hidden">
+        <div className="flex sm:hidden items-center justify-center">
           <ClearAlert clearChat={() => setMessages([])} status={isLoading} />
         </div>
       </div>
