@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/tooltip";
 import { PlusCircle } from "lucide-react";
 
-export function UploadButton({ handleFileChange }) {
+export function UploadButton({ handleFileChange, fileInputRef, setFiles }) {
   return (
     <TooltipProvider>
       <Tooltip>
@@ -19,8 +19,12 @@ export function UploadButton({ handleFileChange }) {
               // accept="video/*"
               accept="image/png ,image/jpeg,image/webp,image/heic,image/heif,application/pdf, video/*"
               hidden
-              onChange={handleFileChange}
-              //   ref={inputRef}
+              onChange={(event) => {
+                if (event.target.files) {
+                  setFiles(event.target.files);
+                }
+              }}
+              ref={fileInputRef}
             />
             <label
               htmlFor="video"
