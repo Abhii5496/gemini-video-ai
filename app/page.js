@@ -19,9 +19,9 @@ import Home from "@/components/Home/Home";
 
 export default function Page() {
   return (
-    <SidebarProvider>
+    <SidebarProvider className="bg-muted">
       {/* <AppSidebar /> */}
-      <SidebarInset className="max-w-3xl mx-auto">
+      <SidebarInset className="max-w-3xl mx-auto bg-muted">
         <Home />
       </SidebarInset>
     </SidebarProvider>

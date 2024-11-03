@@ -28,7 +28,7 @@ const Home = () => {
     setData,
   } = useChat({ api: "/api/generate-content" });
 
-  console.log(messages, input, isLoading);
+  // console.log(messages, input, isLoading);
 
   const handleFileChange = async (event) => {
     const file = event.target.files?.[0];
@@ -94,7 +94,6 @@ const Home = () => {
 
   useEffect(() => {
     if (textareaRef.current) {
-      console.log(textareaRef.current.style.height);
       textareaRef.current.style.height = "inherit";
       const scrollHeight = textareaRef.current.scrollHeight;
 
@@ -112,7 +111,7 @@ const Home = () => {
       </div>
 
       {/* --------Search Bar----------- */}
-      <div className="sticky bottom-0    left-0 bg-background z-40 flex flex-col justify-center items-center w-full p-4 gap-1">
+      <div className="sticky bottom-0 left-0 bg-muted z-40 flex flex-col justify-center items-center w-full p-4 gap-1">
         {/* {uploadStatus === "uploading" && (
           <div className="rounded-full w-full  ">
             <div className="w-60 h-32 bg-muted  rounded-3xl animate-in fade-in-0 zoom-in-95">
@@ -134,7 +133,7 @@ const Home = () => {
         )} */}
 
         <div className="flex gap-1 justify-center items-end w-full">
-          <div className="bg-muted/50  max-h-[250px]  rounded-3xl flex justify-center items-end gap-1 w-full overflow-hidden py-2 px-2">
+          <div className="bg-muted-foreground/30  max-h-[250px]  rounded-3xl flex justify-center items-end gap-1 w-full overflow-hidden py-2 px-2">
             <div className="w-full py-1.5 relative flex items-center justify-center overflow-hidden">
               <textarea
                 ref={textareaRef}

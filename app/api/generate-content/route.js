@@ -14,7 +14,7 @@ const model = google("models/gemini-1.5-pro-latest");
 
 export async function POST(req) {
   const body = await req.json();
-  console.log(body);
+  // console.log(body);
 
   // const messages = reqBody.messages;
   // const userQuestion = `${messages[messages.length - 1].content}`;

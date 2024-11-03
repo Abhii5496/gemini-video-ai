@@ -26,12 +26,12 @@ export function ClearAlert({ clearChat }) {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <button className="rounded-full p-2 hover:bg-muted bg-muted">
+                <button className="rounded-full p-2 bg-muted-foreground/30 hover:bg-muted-foreground/20 ">
                   <ReloadIcon />
                 </button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Clear</p>
+                <p>Clear chat</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
