@@ -1,15 +1,25 @@
 import React from "react";
 import { ClearAlert } from "./ClearAlert";
+import { SelectModel } from "../gemini-model";
+import { Button } from "../ui/button";
+import { PlusIcon } from "lucide-react";
 
 export default function Header({ setMessages, isLoading }) {
   return (
-    <header className="flex h-16 shrink-0 items-center gap-2 sticky top-0 left-0 w-full bg-muted z-40">
-      <div className="flex items-center justify-between gap-2 px-4 w-full border-b border-muted-foreground/60 ">
+    <header className="flex h-18 sticky top-0 bg-background md:h-12 items-center px-2 md:px-2 gap-2 z-40">
+      <div className="flex items-center justify-between gap-2 sm:px-4 w-full h-full ">
         <p className="text-sm text-sidebar-primary-foreground py-3">
-          Start your journey with G-Alpha
+          <SelectModel />
         </p>
-        <div className="flex sm:hidden items-center justify-center">
-          <ClearAlert clearChat={() => setMessages([])} status={isLoading} />
+        <div className="flex items-center justify-center">
+          <ClearAlert clearChat={() => setMessages([])} status={isLoading}>
+            <div className="flex justify-center items-end ">
+              <Button variant="ghost" className="bg-muted/40 px-1.5">
+                <PlusIcon />
+                <span className="hidden sm:flex">New Chat</span>
+              </Button>
+            </div>
+          </ClearAlert>
         </div>
       </div>
     </header>

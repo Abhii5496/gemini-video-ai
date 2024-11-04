@@ -18,31 +18,33 @@ import {
 } from "../ui/tooltip";
 import { ReloadIcon } from "@radix-ui/react-icons";
 
-export function ClearAlert({ clearChat }) {
+export function ClearAlert({ children, clearChat, newChat }) {
   return (
     <AlertDialog className="w-full">
       <AlertDialogTrigger asChild>
-        <div className="flex justify-center items-end pb-2">
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <button className="rounded-full p-2 bg-muted-foreground/30 hover:bg-muted-foreground/20 ">
-                  <ReloadIcon />
-                </button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Clear chat</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </div>
+        {children ?? (
+          <div className="flex justify-center items-center">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button className="rounded-full p-2 bg-muted-foreground/30 hover:bg-muted-foreground/20 ">
+                    <ReloadIcon />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Clear chat</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+        )}
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+          <AlertDialogTitle>Are you absolutely sure ?</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete your chat
-            and remove from history.
+            This action cannot be undone. This will delete your chat and remove
+            from history {newChat && "and start new Chat"}.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

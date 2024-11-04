@@ -21,7 +21,7 @@ export default function Page() {
   return (
     <SidebarProvider className="bg-muted">
       {/* <AppSidebar /> */}
-      <SidebarInset className="max-w-3xl mx-auto bg-muted">
+      <SidebarInset className="">
         <Home />
       </SidebarInset>
     </SidebarProvider>

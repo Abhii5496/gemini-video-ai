@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { generateText, Message, StreamData, streamText } from "ai";
+import { comparePassword } from "@/src/utils/compare-pass";
 
 export const maxDuration = 60;
 
@@ -10,11 +11,22 @@ const google = createGoogleGenerativeAI({
   apiKey,
 });
 
-const model = google("models/gemini-1.5-flash");
-
 export async function POST(req) {
   const body = await req.json();
   // console.log(body);
+
+  const isMatch = await comparePassword(
+    process.env.NEXT_PUBLIC_GEN_TOKEN,
+    body.token
+  );
+  // console.log(isMatch, body.model);
+
+  if (!body.token || !isMatch) {
+    return NextResponse.json(
+      { success: false, message: "Not Authorized" },
+      { status: 400 }
+    );
+  }
 
   // const messages = reqBody.messages;
   // const userQuestion = `${messages[messages.length - 1].content}`;
@@ -29,6 +41,9 @@ export async function POST(req) {
   // }
   // const prompt = "Analyze the this given data and give a summmary";
   // const filePart = fileToGenerativePart();
+  const model = google(
+    body.model ? "models/" + body.model : "models/gemini-1.5-flash"
+  );
 
   const data = new StreamData();
   // data.append({
