@@ -5,14 +5,14 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { PlusCircle } from "lucide-react";
+import { Paperclip, PlusCircle } from "lucide-react";
 
 export function UploadButton({ handleFileChange, fileInputRef, setFiles }) {
   return (
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <div className="h-full flex justify-center items-center p-1.5 hover:bg-accent hover:text-accent-foreground rounded-full">
+          <div className="h-full flex justify-center items-center p-1.5 bg-accent/60 hover:bg-accent hover:text-accent-foreground rounded-full">
             <input
               type="file"
               id="video"
@@ -28,9 +28,9 @@ export function UploadButton({ handleFileChange, fileInputRef, setFiles }) {
             />
             <label
               htmlFor="video"
-              className="h-full flex justify-center items-center cursor-pointer"
+              className="h-full flex justify-center items-center cursor-pointer p-1"
             >
-              <PlusCircle />
+              <Paperclip className="w-4 h-4" />
             </label>
           </div>
         </TooltipTrigger>

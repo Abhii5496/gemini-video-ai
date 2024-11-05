@@ -145,13 +145,12 @@ const Home = () => {
                 />
               </div>
               <div className="flex gap-1 ">
-                {!isLoading ||
-                  (model === geminiModels[2].model && (
-                    <UploadButton
-                      fileInputRef={fileInputRef}
-                      setFiles={setFiles}
-                    />
-                  ))}
+                {!isLoading && model !== "gemini-1.0-pro" && (
+                  <UploadButton
+                    fileInputRef={fileInputRef}
+                    setFiles={setFiles}
+                  />
+                )}
                 {!isLoading ? (
                   <SendButton
                     handleSubmit={onSubmit}
