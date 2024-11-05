@@ -34,7 +34,7 @@ export const ChatCollection = ({ chatHistory, status }) => {
                   )}
                   <div className="flex justify-end bg-muted-foreground/10 py-2.5 px-2 rounded-xl w-fit">
                     <div
-                      className="prose prose-code:overflow-x-scroll prose-pre:bg-[#1a1a30] prose-strong:text-neutral-300 prose-headings:text-neutral-300 text-neutral-300 text-sm prose:w-full w-full prose-code:text-neutral-300 prose-pre:text-pretty prose-a:text-blue-500"
+                      className="prose prose-code:overflow-x-scroll prose-code:selection:bg-gray-700 prose-pre:bg-[#1a1a30] prose-strong:text-neutral-300 prose-headings:text-neutral-300 text-neutral-300 text-sm prose:w-full w-full prose-code:text-neutral-300 prose-pre:text-pretty prose-a:text-blue-500"
                       dangerouslySetInnerHTML={{
                         __html: DOMPurify.sanitize(
                           marked.parse(chat.content || "")
@@ -47,12 +47,14 @@ export const ChatCollection = ({ chatHistory, status }) => {
             ) : (
               <div className="flex gap-1 items-start">
                 <div className="h-8 w-8 my-1.5 bg-muted-foreground/20 flex justify-center items-center rounded-xl">
-                  <Sparkles className="size-4" />
+                  <Sparkles
+                    className={`${status ? "animate-pulse" : ""} size-4`}
+                  />
                 </div>
 
                 <div className=" py-2.5 px-2 rounded-xl ">
                   <div
-                    className="prose prose-code:overflow-x-scroll prose-pre:bg-[#1a1a30] prose-strong:text-neutral-300 prose-headings:text-neutral-300 text-neutral-300 text-sm prose:w-full w-full prose-code:text-neutral-300 prose-pre:text-pretty prose-a:text-blue-500"
+                    className="prose prose-code:overflow-x-scroll prose-code:selection:bg-gray-700 prose-pre:bg-[#1a1a30] prose-strong:text-neutral-300 prose-headings:text-neutral-300 text-neutral-300 text-sm prose:w-full w-full prose-code:text-neutral-300 prose-pre:text-pretty prose-a:text-blue-500"
                     dangerouslySetInnerHTML={{
                       __html: DOMPurify.sanitize(
                         marked.parse(chat.content || "")

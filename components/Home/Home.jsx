@@ -6,7 +6,11 @@ import usechatStore from "@/lib/store";
 import { ChatCollection } from "./ChatCollection";
 import { ClearAlert } from "./ClearAlert";
 import { SendButton } from "./SendButton";
-import { compressImageToBase64, convertVideoToBase64 } from "@/lib/helper";
+import {
+  compressImageToBase64,
+  convertVideoToBase64,
+  geminiModels,
+} from "@/lib/helper";
 import { useChat } from "ai/react";
 import { Button } from "../ui/button";
 import { PaperclipIcon, StopCircle, StopCircleIcon } from "lucide-react";
@@ -52,15 +56,15 @@ const Home = () => {
     if (isLoading) return;
     setInput("");
 
-    const hashedPass = await hashPassword(
-      process.env.NEXT_PUBLIC_GEN_TOKEN,
-      10
-    );
+    // const hashedPass = await hashPassword(
+    //   process.env.NEXT_PUBLIC_GEN_TOKEN,
+    //   10
+    // );
 
     // console.log(hashPassword);
     handleSubmit(event, {
       experimental_attachments: files,
-      body: { token: hashedPass, model },
+      body: { model },
     });
 
     setFiles(undefined);
@@ -141,12 +145,13 @@ const Home = () => {
                 />
               </div>
               <div className="flex gap-1 ">
-                {!isLoading && (
-                  <UploadButton
-                    fileInputRef={fileInputRef}
-                    setFiles={setFiles}
-                  />
-                )}
+                {!isLoading ||
+                  (model === geminiModels[2].model && (
+                    <UploadButton
+                      fileInputRef={fileInputRef}
+                      setFiles={setFiles}
+                    />
+                  ))}
                 {!isLoading ? (
                   <SendButton
                     handleSubmit={onSubmit}

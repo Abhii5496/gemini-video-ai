@@ -9,12 +9,19 @@ export default function Header({ setMessages, isLoading }) {
     <header className="flex h-18 sticky top-0 bg-background md:h-12 items-center px-2 md:px-2 gap-2 z-40">
       <div className="flex items-center justify-between gap-2 sm:px-4 w-full h-full ">
         <p className="text-sm text-sidebar-primary-foreground py-3">
-          <SelectModel />
+          <SelectModel
+            clearChat={() => setMessages([])}
+            isLoading={isLoading}
+          />
         </p>
         <div className="flex items-center justify-center">
           <ClearAlert clearChat={() => setMessages([])} status={isLoading}>
             <div className="flex justify-center items-end ">
-              <Button variant="ghost" className="bg-muted/40 px-1.5">
+              <Button
+                variant="ghost"
+                className="bg-muted/40 px-1.5"
+                disabled={isLoading}
+              >
                 <PlusIcon />
                 <span className="hidden sm:flex">New Chat</span>
               </Button>
