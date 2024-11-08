@@ -34,7 +34,7 @@ export const ChatCollection = ({ chatHistory, status }) => {
                   )}
                   <div className="flex justify-end bg-muted-foreground/10 py-2.5 px-2 rounded-xl w-fit">
                     <div
-                      className="prose prose-code:overflow-x-auto prose-pre:overflow-x-auto prose-code:max-w-full prose-pre:bg-[#1a1a30] prose-strong:text-neutral-300 prose-headings:text-neutral-300 text-neutral-300 text-sm prose:w-full prose-code:text-neutral-300 prose-pre:text-pretty prose-a:text-blue-500"
+                      className="prose prose-code:overflow-x-auto prose-pre:overflow-x-auto prose-code:!whitespace-pre prose-code:max-w-full prose-pre:bg-[#1a1a30] prose-strong:text-neutral-300 prose-headings:text-neutral-300 text-neutral-300 text-sm prose:w-full prose-code:text-neutral-300 prose-pre:text-pretty prose-a:text-blue-500"
                       dangerouslySetInnerHTML={{
                         __html: DOMPurify.sanitize(
                           marked.parse(chat.content || "")
@@ -54,7 +54,7 @@ export const ChatCollection = ({ chatHistory, status }) => {
 
                 <div className=" py-2.5 px-2 rounded-xl ">
                   <div
-                    className="prose prose-code:overflow-x-auto prose-pre:overflow-x-auto prose-code:max-w-full prose-pre:bg-[#1a1a30] prose-strong:text-neutral-300 prose-headings:text-neutral-300 text-neutral-300 text-sm prose:w-full prose-code:text-neutral-300 prose-pre:text-pretty prose-a:text-blue-500"
+                    className="prose prose-code:overflow-x-auto prose-pre:overflow-x-auto prose-code:!whitespace-pre prose-code:max-w-full prose-pre:bg-[#1a1a30] prose-strong:text-neutral-300 prose-headings:text-neutral-300 text-neutral-300 text-sm prose:w-full prose-code:text-neutral-300 prose-pre:text-pretty prose-a:text-blue-500"
                     dangerouslySetInnerHTML={{
                       __html: DOMPurify.sanitize(
                         marked.parse(chat.content || "")
