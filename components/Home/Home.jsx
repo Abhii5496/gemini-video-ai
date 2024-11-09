@@ -10,6 +10,7 @@ import {
   compressImageToBase64,
   convertVideoToBase64,
   geminiModels,
+  initialText,
 } from "@/lib/helper";
 import { useChat } from "ai/react";
 import { Button } from "../ui/button";
@@ -32,9 +33,12 @@ const Home = () => {
     setMessages,
     setInput,
     setData,
-  } = useChat({ api: "/api/generate-content" });
+  } = useChat({
+    api: "/api/generate-content",
+    initialMessages: [{ id: 1, role: "system", content: initialText }],
+  });
 
-  const { model } = usechatStore((state) => state);
+  const { model, addNewChat } = usechatStore((state) => state);
   const [uploadMessage, setUploadMessage] = useState("");
   const [uploadData, setUploadData] = useState(null);
   const [generating, setGenerating] = useState(false);
@@ -120,7 +124,7 @@ const Home = () => {
                 <div className="size-7 bg-muted-foreground/30 flex justify-center items-center rounded-lg">
                   <PaperclipIcon size={20} />
                 </div>
-                <p className="text-sm text-center">{files[0].name}</p>
+                <p className="text-sm text-start">{files[0].name}</p>
                 <div
                   onClick={() => setFiles([])}
                   className="absolute z-40 -top-4 -right-2 size-6 bg-red-900 flex items-center justify-center rounded-lg cursor-pointer "
@@ -140,7 +144,7 @@ const Home = () => {
                   value={input}
                   onChange={handleInputChange}
                   style={{ minHeight: 24, maxHeight: 240, height: 24 }}
-                  placeholder="e.g. summarize this video"
+                  placeholder="e.g. summarize this document"
                   className="w-full text-sm resize-none outline-none bg-transparent placeholder:text-gray-400 overflow-y-auto"
                 />
               </div>

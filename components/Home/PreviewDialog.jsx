@@ -64,7 +64,9 @@ export default function PreviewDialog({ url, name, type }) {
               ></path>
             </svg>
           </div>
-          <p className="text-sm text-center">{name}</p>
+          <p className="text-sm text-start max-w-sm !whitespace-pre-wrap">
+            {name}
+          </p>
         </div>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[700px]">
