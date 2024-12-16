@@ -20,14 +20,18 @@ export const ChatCollection = ({ chatHistory, status }) => {
     <div className="w-full h-full flex flex-col gap-2 ">
       {chatHistory && chatHistory.length <= 1 && (
         <div className="h-[60vh] w-full flex-col items-center flex justify-center text-xl font-medium font-mono text-center">
-          <p className="">
+          {/* <p className="">
             Upload any PDF or Image and ask what's on your mind ?
-          </p>
+          </p> */}
+          <h1 className="text-2xl text-green-300">
+            रूपा ए.आई. - आपकी हिंदी सहायक
+          </h1>
           <p
             className="pt-6 text-green-300
           "
           >
-            कोई भी PDF या इमेज़ अपलोड करें और पूछें आपके दिमाग में क्या है?
+            रूपा ए.आई. हर सवाल का जवाब केवल हिंदी में देती है। अब भाषा की कोई
+            रुकावट नहीं।
           </p>
         </div>
       )}

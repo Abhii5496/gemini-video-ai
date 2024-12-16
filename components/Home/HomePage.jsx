@@ -307,9 +307,9 @@ const HomePage = () => {
               />
             </div>
             <div className="flex gap-1 ">
-              {uploadStatus !== "uploading" && (
+              {/* {uploadStatus !== "uploading" && (
                 <UploadButton handleFileChange={handleFileChange} />
-              )}
+              )} */}
               {!generating ? (
                 <SendButton
                   handleSubmit={handleSubmit}

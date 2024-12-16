@@ -9,7 +9,7 @@ export default function Header({ setMessages, isLoading }) {
     <header className="flex h-18 sticky top-0 bg-background md:h-12 items-center px-2 md:px-2 gap-2 z-40">
       <div className="flex items-center justify-between gap-2 sm:px-4 w-full h-full ">
         <p className="text-lg font-bold text-sidebar-primary-foreground py-3 italic">
-          Roopa ai{" "}
+          रूपा a.i
         </p>
         <div className="flex items-center justify-center">
           <ClearAlert clearChat={() => setMessages([])} status={isLoading}>
