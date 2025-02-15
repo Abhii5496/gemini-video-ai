@@ -6,17 +6,15 @@ import { PlusIcon } from "lucide-react";
 
 export default function Header({ setMessages, isLoading }) {
   return (
-    <header className="flex h-18 sticky top-0 bg-background md:h-12 items-center px-2 md:px-2 gap-2 z-40">
+    <header className="flex h-18 sm:h-24 sticky top-0 bg-background md:h-12 items-center px-2 md:px-2 gap-2 z-40">
       <div className="flex items-center justify-between gap-2 sm:px-4 w-full h-full ">
-        <p className="text-lg font-bold text-sidebar-primary-foreground py-3 italic">
-          रूपा a.i
-        </p>
+        <p className="text-lg font-bold  py-3 uppercase">Roopa</p>
         <div className="flex items-center justify-center">
           <ClearAlert clearChat={() => setMessages([])} status={isLoading}>
             <div className="flex justify-center items-end ">
               <Button
                 variant="ghost"
-                className="bg-muted/40 px-1.5"
+                className="bg-muted/40 p-4"
                 disabled={isLoading}
               >
                 <PlusIcon />

@@ -237,7 +237,7 @@ const HomePage = () => {
 
   useEffect(() => {
     const handleKeyPress = (event) => {
-      if (event.key === "Enter" && (event.ctrlKey || event.metaKey)) {
+      if (event.key === "Enter") {
         if (!prompt) {
           alert("Please enter prompt");
           return;
@@ -284,51 +284,6 @@ const HomePage = () => {
             </div>
           </div>
         )}
-
-        <div className="flex gap-1 justify-center items-end w-full">
-          <div className="bg-muted/50  rounded-3xl flex justify-center items-end gap-1 w-full overflow-hidden py-2 px-2">
-            <div className="w-full relative flex items-center overflow-hidden">
-              <textarea
-                ref={textareaRef}
-                autoFocus={focusText}
-                value={input}
-                onChange={handleInputChange}
-                placeholder="e.g. summarize this video"
-                className="min-h-[35px] max-h-[200px]  w-full resize-none
-                bg-transparent p-2 text-sm outline-none focus:outline-none ring-0 focus:ring-0
-                rounded-md border border-none "
-                // onKeyDown={(e) => {
-                //   if (e.key === 'Enter' && !e.shiftKey) {
-                //     e.preventDefault()
-                //     handleSubmit(e)
-                //   }
-                // }}
-                // className="bg-transparent w-full p-2 text-sm outline-none focus:outline-none ring-0 focus:ring-0 resize-none"
-              />
-            </div>
-            <div className="flex gap-1 ">
-              {/* {uploadStatus !== "uploading" && (
-                <UploadButton handleFileChange={handleFileChange} />
-              )} */}
-              {!generating ? (
-                <SendButton
-                  handleSubmit={handleSubmit}
-                  uploadStatus={uploadStatus}
-                />
-              ) : (
-                <div className=" flex justify-center items-center gap-1 bg-muted/80 px-4 py-0 rounded-full">
-                  <div class="w-1 h-2 animate-in fade-in animate-pulse repeat-infinite ease-in-out delay-0 duration-500 bg-white rounded-full"></div>
-                  <div class="w-1 h-2 animate-in fade-in animate-pulse repeat-infinite ease-in-out delay-75 duration-500 bg-white rounded-full"></div>
-                  <div class="w-1 h-2 animate-in fade-in animate-pulse repeat-infinite ease-in-out delay-150 duration-500 bg-white rounded-full"></div>
-                  <div class="w-1 h-2 animate-in fade-in animate-pulse repeat-infinite ease-in-out delay-200 duration-500 bg-white rounded-full"></div>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* //clear */}
-          <ClearAlert clearChat={clearChat} status={generating} />
-        </div>
       </div>
     </>
   );

@@ -13,7 +13,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import HomePage from "@/components/Home/HomePage";
+import HomePage from "@/components/Home/HomePage.bk";
 import { SelectModel } from "@/components/gemini-model";
 import Home from "@/components/Home/Home";
 

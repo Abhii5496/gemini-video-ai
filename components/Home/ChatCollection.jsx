@@ -18,20 +18,20 @@ export const ChatCollection = ({ chatHistory, status }) => {
 
   return (
     <div className="w-full h-full flex flex-col gap-2 ">
-      {chatHistory && chatHistory.length <= 1 && (
-        <div className="h-[60vh] w-full flex-col items-center flex justify-center text-xl font-medium font-mono text-center">
+      {chatHistory && chatHistory.length <= 0 && (
+        <div className="h-[60vh] w-full flex-col items-start pl-6 flex justify-center text-xl font-bold  text-center">
           {/* <p className="">
             Upload any PDF or Image and ask what's on your mind ?
           </p> */}
-          <h1 className="text-2xl text-green-300">
-            रूपा ए.आई. - आपकी हिंदी सहायक
+          <h1 className="text-3xl sm:text-4xl text-green-300 bg-clip-text bg-gradient-to-r  from-white via-[#dd6aba] to-blue-400 text-transparent">
+            {/* रूपा ए.आई. - आपकी हिंदी सहायक */}
+            Hi there,
           </h1>
           <p
-            className="pt-6 text-green-300
+            className="pt-2 text-start text-4xl sm:text-5xl bg-clip-text bg-gradient-to-r  from-purple-500 via-foreground to-blue-400 text-transparent
           "
           >
-            रूपा ए.आई. हर सवाल का जवाब केवल हिंदी में देती है। अब भाषा की कोई
-            रुकावट नहीं।
+            I'm RuPa - Your Personal Assistant
           </p>
         </div>
       )}

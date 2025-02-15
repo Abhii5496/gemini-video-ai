@@ -18,7 +18,7 @@ import {
 } from "../ui/tooltip";
 import { ReloadIcon } from "@radix-ui/react-icons";
 
-export function ClearAlert({ children, clearChat, newChat }) {
+export function ClearAlert({ children, clearChat, newChat, status }) {
   return (
     <AlertDialog className="w-full">
       <AlertDialogTrigger asChild>
@@ -27,7 +27,10 @@ export function ClearAlert({ children, clearChat, newChat }) {
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <button className="rounded-full p-2 bg-muted-foreground/30 hover:bg-muted-foreground/20 ">
+                  <button
+                    disabled={status}
+                    className="rounded-full p-2 bg-muted-foreground/30 hover:bg-muted-foreground/20 "
+                  >
                     <ReloadIcon />
                   </button>
                 </TooltipTrigger>
@@ -51,7 +54,7 @@ export function ClearAlert({ children, clearChat, newChat }) {
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction
             onClick={clearChat}
-            className="text-primary bg-destructive/80 hover:bg-destructive/60"
+            className="text-foreground bg-destructive/80 hover:bg-destructive/60"
           >
             Continue
           </AlertDialogAction>

@@ -7,7 +7,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { listAllFiles, uploadToGemini } from "@/src/utils/actions";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, Send } from "lucide-react";
 
 export function SendButton({ handleSubmit, uploadStatus }) {
   const getlist = async () => {
@@ -21,15 +21,15 @@ export function SendButton({ handleSubmit, uploadStatus }) {
           <Button
             disabled={uploadStatus == "uploading"}
             variant="secondary"
-            className="rounded-full px-5 hover:bg-foreground hover:text-secondary"
+            className="rounded-full px-5 hover:bg-muted-foreground/20 bg-foreground hover:text-foreground text-background border border-muted-foreground/20"
             onClick={handleSubmit}
           >
-            Run
+            <Send />
           </Button>
         </TooltipTrigger>
-        <TooltipContent className="bg-opacity-40">
-          <p>ctrl + Enter to send</p>
-        </TooltipContent>
+        {/* <TooltipContent className="bg-opacity-40">
+          <p>Enter to send</p>
+        </TooltipContent> */}
       </Tooltip>
     </TooltipProvider>
   );
