@@ -41,7 +41,8 @@ export function UploadButton({
               htmlFor="file"
               className="h-full flex justify-center items-center cursor-pointer p-0.5"
             >
-              <Paperclip className="w-4 h-4" />
+              <Paperclip className="w-4 h-4" />{" "}
+              {/* <span className="text-sm pl-1">Attach</span> */}
             </label>
           </div>
         </TooltipTrigger>

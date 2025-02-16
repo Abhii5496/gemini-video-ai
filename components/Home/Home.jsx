@@ -46,7 +46,7 @@ const Home = () => {
   const [files, setFiles] = useState(undefined);
   const fileInputRef = useRef(null);
 
-  // console.log(files);
+  console.log("datta", data);
 
   const onSubmit = async (event) => {
     if (!input.trim()) {
@@ -104,7 +104,13 @@ const Home = () => {
           {!isLoading && files?.length > 0 && (
             <div className="rounded-full w-full  ">
               <div className="flex justify-start items-center gap-2 bg-muted-foreground/20 w-fit rounded-xl p-2 relative">
-                <p className="text-sm text-start">{files[0].name}</p>
+                <p className="text-sm text-start">
+                  {files[0].name.length > 19
+                    ? files[0].name.substring(0, 15) +
+                      "..." +
+                      files[0].type.split("/")[1]
+                    : files[0].name}
+                </p>
                 <div
                   onClick={() => {
                     setFiles([]);

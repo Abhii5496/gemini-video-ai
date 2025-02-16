@@ -31,7 +31,7 @@ export const ChatCollection = ({ chatHistory, status }) => {
             className="pt-2 text-start text-4xl sm:text-5xl bg-clip-text bg-gradient-to-r  from-purple-500 via-foreground to-blue-400 text-transparent
           "
           >
-            I'm RuPa - Your Personal Assistant
+            I'm RooPa - Your Personal Assistant
           </p>
         </div>
       )}
@@ -66,7 +66,7 @@ export const ChatCollection = ({ chatHistory, status }) => {
             ) : (
               chat.role == "assistant" && (
                 <div className="flex gap-1 items-start">
-                  <div className="h-8 w-8 flex-shrink-0 my-1.5 bg-muted-foreground/20 flex justify-center items-center rounded-xl">
+                  <div className="h-8 w-8 flex-shrink-0 my-1.5 bg-gradient-to-tr  from-purple-700 via-green-700  to-blue-700 flex justify-center items-center rounded-xl">
                     <Sparkles
                       className={`${status ? "animate-pulse" : ""} size-4`}
                     />
@@ -74,7 +74,7 @@ export const ChatCollection = ({ chatHistory, status }) => {
 
                   <div className=" py-2.5 px-2 rounded-xl ">
                     <div
-                      className="prose prose-code:overflow-x-auto prose-pre:overflow-x-auto prose-code:!whitespace-pre-wrap prose-code:max-w-full prose-pre:bg-[#1a1a30] prose-strong:text-neutral-300 prose-headings:text-neutral-300 text-neutral-300 text-sm prose:w-full prose-code:text-neutral-300 prose-pre:text-pretty prose-a:text-blue-500"
+                      className="prose prose-code:overflow-x-auto prose-pre:overflow-x-auto prose-code:!whitespace-pre-wrap prose-code:max-w-full prose-pre:bg-muted-foreground/10 prose-strong:text-neutral-300 prose-headings:text-neutral-300 text-neutral-300 text-sm prose:w-full prose-code:text-neutral-300 prose-pre:text-pretty prose-a:text-blue-500"
                       dangerouslySetInnerHTML={{
                         __html: DOMPurify.sanitize(
                           marked.parse(chat.content || "")

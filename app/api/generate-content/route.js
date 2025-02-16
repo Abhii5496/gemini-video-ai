@@ -82,7 +82,7 @@ export async function POST(req) {
 
     return result.toDataStreamResponse({ data });
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return NextResponse.json({ error });
   }
 }
