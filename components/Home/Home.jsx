@@ -21,6 +21,8 @@ import { hashPassword } from "@/src/utils/hash-password";
 import { Textarea } from "../ui/textarea";
 
 const Home = () => {
+  const { model, addNewChat, lang } = usechatStore((state) => state);
+
   const {
     messages,
     input,
@@ -40,13 +42,12 @@ const Home = () => {
     initialMessages: [],
   });
 
-  const { model, addNewChat } = usechatStore((state) => state);
   const [generating, setGenerating] = useState(false);
 
   const [files, setFiles] = useState(undefined);
   const fileInputRef = useRef(null);
 
-  console.log("datta", data);
+  // console.log("datta", data);
 
   const onSubmit = async (event) => {
     if (!input.trim()) {
@@ -79,19 +80,29 @@ const Home = () => {
     }
   }, [input]);
 
+  console.log(isLoading);
+
   // console.log(messages);
   // console.log(isLoading, messages);
   const [messagesContainerRef, messagesEndRef] = useScrollToBottom();
 
   return (
     <div className="flex flex-col min-w-0 h-dvh bg-background">
-      <Header isLoading={isLoading} setMessages={setMessages} />
+      <Header
+        isLoading={isLoading}
+        setMessages={setMessages}
+        messages={messages}
+      />
       <div
         ref={messagesContainerRef}
         className="flex flex-col min-w-0 gap-6 flex-1 overflow-y-scroll"
       >
         <div className="w-full mx-auto max-w-3xl px-4">
-          <ChatCollection chatHistory={messages} status={isLoading} />
+          <ChatCollection
+            chatHistory={messages}
+            status={isLoading}
+            lang={lang}
+          />
         </div>
 
         <div

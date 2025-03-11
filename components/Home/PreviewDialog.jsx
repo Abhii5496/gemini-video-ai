@@ -65,7 +65,9 @@ export default function PreviewDialog({ url, name, type }) {
             </svg>
           </div>
           <p className="text-sm text-start max-w-sm !whitespace-pre-wrap">
-            {name}
+            {name?.length > 19
+              ? name.substring(0, 15) + "..." + type.split("/")[1]
+              : name}
           </p>
         </div>
       </DialogTrigger>

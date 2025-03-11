@@ -42,7 +42,7 @@ export function ClearAlert({ children, clearChat, newChat, status }) {
           </div>
         )}
       </AlertDialogTrigger>
-      <AlertDialogContent>
+      <AlertDialogContent className="max-w-sm sm:max-w-lg rounded-3xl">
         <AlertDialogHeader>
           <AlertDialogTitle>Are you absolutely sure ?</AlertDialogTitle>
           <AlertDialogDescription>
@@ -52,10 +52,7 @@ export function ClearAlert({ children, clearChat, newChat, status }) {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction
-            onClick={clearChat}
-            className="text-foreground bg-destructive/80 hover:bg-destructive/60"
-          >
+          <AlertDialogAction onClick={clearChat} className="">
             Continue
           </AlertDialogAction>
         </AlertDialogFooter>
