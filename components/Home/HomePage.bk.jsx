@@ -1,50 +1,36 @@
-"use client";
-import {
-  newUploadGemini,
-  uploadToGemini,
-  waitForFilesActive,
-} from "@/src/utils/actions";
-import VideoPreview from "@/components/VideoPreview";
-import { GoogleGenerativeAI } from "@google/generative-ai";
-import axios from "axios";
-import React, { useState, useRef, useEffect } from "react";
-import { UploadButton } from "./UploadButton";
-import usechatStore from "@/lib/store";
-import { ChatCollection } from "./ChatCollection";
-import { ClearAlert } from "./ClearAlert";
-import { SendButton } from "./SendButton";
-import { compressImageToBase64, convertVideoToBase64 } from "@/lib/helper";
-import { useChat } from "ai/react";
+"use client"
+import { newUploadGemini, uploadToGemini, waitForFilesActive } from "@/utils/actions"
+import VideoPreview from "@/components/VideoPreview"
+import { GoogleGenerativeAI } from "@google/generative-ai"
+import axios from "axios"
+import React, { useState, useRef, useEffect } from "react"
+import { UploadButton } from "./UploadButton"
+import usechatStore from "@/lib/store"
+import { ChatCollection } from "./ChatCollection"
+import { ClearAlert } from "./ClearAlert"
+import { SendButton } from "./SendButton"
+import { compressImageToBase64, convertVideoToBase64 } from "@/lib/helper"
+import { useChat } from "ai/react"
 
 const HomePage = () => {
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [prompt, setPrompt] = useState("");
-  const [focusText, setFocusText] = useState(false);
-  const [videoURL, setVideoURL] = useState("");
-  const [vidStatus, setVidStatus] = useState(false);
-  const {
-    addNewChat,
-    chatHistory,
-    clearChat,
-    model: genAiModel,
-  } = usechatStore((state) => state);
+  const [selectedFile, setSelectedFile] = useState(null)
+  const [prompt, setPrompt] = useState("")
+  const [focusText, setFocusText] = useState(false)
+  const [videoURL, setVideoURL] = useState("")
+  const [vidStatus, setVidStatus] = useState(false)
+  const { addNewChat, chatHistory, clearChat, model: genAiModel } = usechatStore((state) => state)
 
-  const { messages, input, handleSubmit, handleInputChange, isLoading } =
-    useChat({ api: "/api/generate-content" });
+  const { messages, input, handleSubmit, handleInputChange, isLoading } = useChat({
+    api: "/api/generate-content",
+  })
 
-  console.log(messages, input, isLoading);
+  console.log(messages, input, isLoading)
 
-  const [uploadStatus, setUploadStatus] = useState("idle"); // 'idle', 'uploading', 'success', 'error'
-  const [base64Data, setBase64Data] = useState("");
-  const [mimeType, setMimeType] = useState("");
-  const inputRef = useRef(null);
-  const ImgfileType = [
-    "image/png",
-    "image/jpeg",
-    "image/webp",
-    "image/heic",
-    "image/heif",
-  ];
+  const [uploadStatus, setUploadStatus] = useState("idle") // 'idle', 'uploading', 'success', 'error'
+  const [base64Data, setBase64Data] = useState("")
+  const [mimeType, setMimeType] = useState("")
+  const inputRef = useRef(null)
+  const ImgfileType = ["image/png", "image/jpeg", "image/webp", "image/heic", "image/heif"]
 
   const vidFileType = [
     "video/mp4",
@@ -56,24 +42,24 @@ const HomePage = () => {
     "video/webm",
     "video/wmv",
     "video/3gpp",
-  ];
+  ]
 
-  const isPdfFile = (file) => ["application/pdf"].includes(file.type);
-  const isImageFile = (file) => ImgfileType.includes(file.type);
-  const isvidFile = (file) => vidFileType.includes(file.type);
+  const isPdfFile = (file) => ["application/pdf"].includes(file.type)
+  const isImageFile = (file) => ImgfileType.includes(file.type)
+  const isvidFile = (file) => vidFileType.includes(file.type)
 
   const checkFileType = (file) => {
-    if (!file) throw new Error("Please select a file");
-    const isValidType = fileType.includes(file.type);
-    if (!isValidType) throw new Error("Unsupported file type");
-    return isValidType;
-  };
+    if (!file) throw new Error("Please select a file")
+    const isValidType = fileType.includes(file.type)
+    if (!isValidType) throw new Error("Unsupported file type")
+    return isValidType
+  }
 
   const handleFileChange = async (event) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-    setBase64Data("");
-    setMimeType(file.type);
+    const file = event.target.files?.[0]
+    if (!file) return
+    setBase64Data("")
+    setMimeType(file.type)
     // console.log(checkFileType(file));
     // if (checkFileType(file)) {
     //   setSelectedFile(file);
@@ -81,46 +67,46 @@ const HomePage = () => {
     //   setVideoURL(URL.createObjectURL(file));
     // }
     if (isPdfFile(file)) {
-      const reader = new FileReader();
+      const reader = new FileReader()
       reader.onloadend = () => {
-        const fileContent = reader.result;
-        console.log(fileContent);
-        setBase64Data(fileContent);
-      };
-      reader.readAsDataURL(file);
+        const fileContent = reader.result
+        console.log(fileContent)
+        setBase64Data(fileContent)
+      }
+      reader.readAsDataURL(file)
     }
 
     if (isImageFile(file)) {
       // console.log("compressig");
-      const cImg = await compressImageToBase64(file, 0.1);
+      const cImg = await compressImageToBase64(file, 0.1)
       // console.log(cImg);
-      setBase64Data(cImg);
+      setBase64Data(cImg)
     }
     if (isvidFile(file)) {
-      console.log("compressig");
+      console.log("compressig")
 
-      const vidBase64 = await convertVideoToBase64(file);
-      console.log(vidBase64);
-      setBase64Data(vidBase64);
+      const vidBase64 = await convertVideoToBase64(file)
+      console.log(vidBase64)
+      setBase64Data(vidBase64)
     }
-  };
+  }
 
-  const textareaRef = useRef(null);
+  const textareaRef = useRef(null)
 
   useEffect(() => {
     if (textareaRef.current) {
-      textareaRef.current.style.height = "inherit";
-      const scrollHeight = textareaRef.current.scrollHeight;
-      textareaRef.current.style.height = scrollHeight + "px";
+      textareaRef.current.style.height = "inherit"
+      const scrollHeight = textareaRef.current.scrollHeight
+      textareaRef.current.style.height = scrollHeight + "px"
     }
-  }, [prompt]);
+  }, [prompt])
 
   // console.log("file", selectedFile);
   // console.log(focusText);
 
-  const [uploadMessage, setUploadMessage] = useState("");
-  const [uploadData, setUploadData] = useState(null);
-  const [generating, setGenerating] = useState(false);
+  const [uploadMessage, setUploadMessage] = useState("")
+  const [uploadData, setUploadData] = useState(null)
+  const [generating, setGenerating] = useState(false)
 
   // console.log(uploadMessage);
 
@@ -239,19 +225,19 @@ const HomePage = () => {
     const handleKeyPress = (event) => {
       if (event.key === "Enter") {
         if (!prompt) {
-          alert("Please enter prompt");
-          return;
+          alert("Please enter prompt")
+          return
         }
-        handleSubmit();
+        handleSubmit()
       }
-    };
+    }
 
-    document.addEventListener("keydown", handleKeyPress);
+    document.addEventListener("keydown", handleKeyPress)
 
     return () => {
-      document.removeEventListener("keydown", handleKeyPress);
-    };
-  }, [prompt]);
+      document.removeEventListener("keydown", handleKeyPress)
+    }
+  }, [prompt])
 
   // console.log(chatHistory);
 
@@ -286,7 +272,7 @@ const HomePage = () => {
         )}
       </div>
     </>
-  );
-};
+  )
+}
 
-export default HomePage;
+export default HomePage
