@@ -8,6 +8,7 @@ export const metadata = {
   title: "रूपा",
   description: "मेरा नाम रूपा है। मुझे नीला रंग बहुत पसंद है।",
   images: ["https://roopa.vercel.app/api/og"],
+
   openGraph: {
     title: "रूपा",
     description: "मेरा नाम रूपा है। मुझे नीला रंग बहुत पसंद है।",

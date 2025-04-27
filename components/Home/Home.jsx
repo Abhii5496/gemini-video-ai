@@ -1,26 +1,38 @@
-"use client";
+"use client"
 
-import React, { useState, useRef, useEffect } from "react";
-import { UploadButton } from "./UploadButton";
-import usechatStore from "@/lib/store";
-import { ChatCollection } from "./ChatCollection";
-import { ClearAlert } from "./ClearAlert";
-import { SendButton } from "./SendButton";
+import React, { useState, useRef, useEffect } from "react"
+import { UploadButton } from "./UploadButton"
+import usechatStore from "@/lib/store"
+import { ChatCollection } from "./ChatCollection"
+import { ClearAlert } from "./ClearAlert"
+import { SendButton } from "./SendButton"
 import {
   compressImageToBase64,
   convertVideoToBase64,
   geminiModels,
-  initialText,
-} from "@/lib/helper";
-import { useChat } from "ai/react";
-import { Button } from "../ui/button";
-import { PaperclipIcon, StopCircle, StopCircleIcon } from "lucide-react";
-import Header from "./Header";
-import { useScrollToBottom } from "@/hooks/use-scoll-to-bottom";
-import { hashPassword } from "@/src/utils/hash-password";
-import { Textarea } from "../ui/textarea";
+  initialHindiText,
+} from "@/lib/helper"
+import { useChat } from "ai/react"
+import { Button } from "../ui/button"
+import { PaperclipIcon, StopCircle, StopCircleIcon } from "lucide-react"
+import Header from "./Header"
+import { useScrollToBottom } from "@/hooks/use-scoll-to-bottom"
+import { hashPassword } from "@/utils/hash-password"
+import { Textarea } from "../ui/textarea"
+import LangSelector from "../lang"
+import { getModelLanguage } from "@/actions/modelLanguage"
 
 const Home = () => {
+  const { model, addNewChat, lang, setLang } = usechatStore((state) => state)
+  const getLang = async () => {
+    const initial = await getModelLanguage()
+    setLang(initial)
+  }
+
+  useEffect(() => {
+    getLang()
+  }, [])
+
   const {
     messages,
     input,
@@ -36,85 +48,81 @@ const Home = () => {
     setData,
   } = useChat({
     api: "/api/generate-content",
-    // initialMessages: [{ id: 1, role: "system", content: initialText }],
-    initialMessages: [],
-  });
+    initialMessages: [{ id: 1, role: "system", content: initialHindiText }],
+  })
+  const [generating, setGenerating] = useState(false)
 
-  const { model, addNewChat } = usechatStore((state) => state);
-  const [generating, setGenerating] = useState(false);
+  const [files, setFiles] = useState(undefined)
+  const fileInputRef = useRef(null)
 
-  const [files, setFiles] = useState(undefined);
-  const fileInputRef = useRef(null);
-
-  console.log("datta", data);
+  // console.log("datta", data);
 
   const onSubmit = async (event) => {
     if (!input.trim()) {
-      alert("Please enter prompt");
-      return;
+      alert("Please enter prompt")
+      return
     }
-    if (isLoading) return;
-    setInput("");
+    setGenerating(true)
+    if (isLoading) return
+    setInput("")
 
     handleSubmit(event, {
       experimental_attachments: files,
       body: { model },
-    });
+    })
 
-    setFiles(undefined);
+    setFiles(undefined)
 
     if (fileInputRef.current) {
-      fileInputRef.current.value = "";
+      fileInputRef.current.value = ""
     }
-  };
+    setGenerating(false)
+  }
 
-  const textareaRef = useRef(null);
+  const textareaRef = useRef(null)
 
   useEffect(() => {
     if (textareaRef.current) {
-      textareaRef.current.style.height = "inherit";
-      const scrollHeight = textareaRef.current.scrollHeight;
+      textareaRef.current.style.height = "inherit"
+      const scrollHeight = textareaRef.current.scrollHeight
 
-      textareaRef.current.style.height = scrollHeight - 60 + "px";
+      textareaRef.current.style.height = scrollHeight - 60 + "px"
     }
-  }, [input]);
+  }, [input])
+
+  console.log(isLoading)
 
   // console.log(messages);
   // console.log(isLoading, messages);
-  const [messagesContainerRef, messagesEndRef] = useScrollToBottom();
+  const [messagesContainerRef, messagesEndRef] = useScrollToBottom()
 
   return (
-    <div className="flex flex-col min-w-0 h-dvh bg-background">
-      <Header isLoading={isLoading} setMessages={setMessages} />
+    <div className="flex flex-col min-w-0 h-dvh">
+      <Header isLoading={isLoading} setMessages={setMessages} messages={messages} />
       <div
         ref={messagesContainerRef}
-        className="flex flex-col min-w-0 gap-6 flex-1 overflow-y-scroll"
+        className="flex flex-col min-w-0 gap-6 flex-1 overflow-y-scroll "
       >
         <div className="w-full mx-auto max-w-3xl px-4">
-          <ChatCollection chatHistory={messages} status={isLoading} />
+          <ChatCollection chatHistory={messages} status={isLoading} lang={lang} />
         </div>
 
-        <div
-          ref={messagesEndRef}
-          className="shrink-0 min-w-[24px] min-h-[24px]"
-        />
+        <div ref={messagesEndRef} className="shrink-0 min-w-[4px] min-h-[4px]" />
       </div>
-      <div className="flex mx-auto sm:px-4 bg-background pb-4 md:pb-6 gap-2 w-full md:max-w-3xl">
+      <div className="flex mx-auto sm:px-4  pb-4 md:pb-6 gap-2 w-full md:max-w-3xl">
         <div className=" z-40 flex flex-col justify-center items-center w-full p-4 gap-1">
           {!isLoading && files?.length > 0 && (
             <div className="rounded-full w-full  ">
               <div className="flex justify-start items-center gap-2 bg-muted-foreground/20 w-fit rounded-xl p-2 relative">
                 <p className="text-sm text-start">
                   {files[0].name.length > 19
-                    ? files[0].name.substring(0, 15) +
-                      "..." +
-                      files[0].type.split("/")[1]
+                    ? files[0].name.substring(0, 15) + "..." + files[0].type.split("/")[1]
                     : files[0].name}
                 </p>
                 <div
                   onClick={() => {
-                    setFiles([]);
-                    fileInputRef.current.value = null;
+                    setFiles([])
+                    fileInputRef.current.value = null
                   }}
                   className="absolute z-40 -top-4 -right-2 size-6 bg-red-900 flex items-center justify-center rounded-lg cursor-pointer "
                 >
@@ -134,19 +142,19 @@ const Home = () => {
                   onChange={handleInputChange}
                   onKeyDown={(event) => {
                     if (event.key === "Enter" && !event.shiftKey) {
-                      event.preventDefault();
+                      event.preventDefault()
 
                       if (isLoading) {
                         // toast.error(
                         //   "Please wait for the model to finish its response!"
                         // );
                       } else {
-                        onSubmit();
+                        onSubmit()
                       }
                     }
                   }}
                   style={{ minHeight: 60, maxHeight: 240, height: 60 }}
-                  placeholder="Ask whatever you want"
+                  placeholder={lang === "hi" ? "कृपया अपना प्रश्न पूछें।" : "Ask whatever you want"}
                   className="w-full text-sm resize-none outline-none bg-transparent placeholder:text-gray-400 overflow-y-auto"
                 />
               </div>
@@ -164,6 +172,13 @@ const Home = () => {
                     clearChat={() => setMessages([])}
                     status={isLoading || messages?.length === 0}
                     newChat={true}
+                  />
+                  <LangSelector
+                    disabled={isLoading}
+                    messages={messages}
+                    setMessages={setMessages}
+                    setLang={setLang}
+                    lang={lang}
                   />
                 </div>
                 <div>
@@ -188,7 +203,7 @@ const Home = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Home;
+export default Home

@@ -8,6 +8,69 @@ module.exports = {
   ],
   theme: {
     extend: {
+      animation: {
+        "border-x": "border-x 2s linear infinite",
+        "border-y": "border-y 2s linear infinite",
+        "border-x-reverse": "border-x-reverse 2s linear infinite",
+        "border-y-reverse": "border-y-reverse 2s linear infinite",
+        "gradient-x": "gradient-x 3s ease infinite",
+        "color-change": "color-change 3s ease-in-out infinite",
+      },
+      keyframes: {
+        "border-x": {
+          "0%": {
+            transform: "translateX(-100%)",
+          },
+          "100%": {
+            transform: "translateX(100%)",
+          },
+        },
+        "border-y": {
+          "0%": {
+            transform: "translateY(-100%)",
+          },
+          "100%": {
+            transform: "translateY(100%)",
+          },
+        },
+        "border-x-reverse": {
+          "0%": {
+            transform: "translateX(100%)",
+          },
+          "100%": {
+            transform: "translateX(-100%)",
+          },
+        },
+        "border-y-reverse": {
+          "0%": {
+            transform: "translateY(100%)",
+          },
+          "100%": {
+            transform: "translateY(-100%)",
+          },
+        },
+        "color-change": {
+          "0%": {
+            backgroundPosition: "0% 50%",
+          },
+          "50%": {
+            backgroundPosition: "100% 50%",
+          },
+          "100%": {
+            backgroundPosition: "0% 50%",
+          },
+        },
+        "gradient-x": {
+          "0%, 100%": {
+            "background-size": "200% 200%",
+            "background-position": "left center",
+          },
+          "50%": {
+            "background-size": "200% 200%",
+            "background-position": "right center",
+          },
+        },
+      },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":
@@ -76,6 +139,7 @@ module.exports = {
             ul: {
               listStyleType: "disc", // Ensure bullet points are discs
               paddingLeft: "1.25rem", // Indent the bullet points
+              color: "white",
             },
             li: {
               marginBottom: "0.5rem", // Space between bullet points
