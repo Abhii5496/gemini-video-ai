@@ -22,6 +22,56 @@ const NonMemoizedMarkdown = ({ children }) => {
   }
 
   const components = {
+    table({ node, children, ...props }) {
+      return (
+        <div className="overflow-x-auto my-2 [&::-webkit-scrollbar]:h-1.5">
+          <table className="w-full " {...props}>
+            {children}
+          </table>
+        </div>
+      )
+    },
+    thead({ node, children, ...props }) {
+      return (
+        <thead className="bg-neutral-50/50 dark:bg-neutral-800/50" {...props}>
+          {children}
+        </thead>
+      )
+    },
+    tbody({ node, children, ...props }) {
+      return (
+        <tbody className="divide-y-[1px] divide-neutral-200 dark:divide-neutral-700" {...props}>
+          {children}
+        </tbody>
+      )
+    },
+    tr({ node, children, ...props }) {
+      return (
+        <tr className="hover:bg-neutral-50/30 dark:hover:bg-neutral-700/15" {...props}>
+          {children}
+        </tr>
+      )
+    },
+    th({ node, children, ...props }) {
+      return (
+        <th
+          className="px-3 border-l py-2 text-left text-xs text-neutral-500 dark:text-neutral-300 uppercase"
+          {...props}
+        >
+          {children}
+        </th>
+      )
+    },
+    td({ node, children, ...props }) {
+      return (
+        <td
+          className="px-3 border-l py-2 text-xs text-neutral-500 dark:text-neutral-300"
+          {...props}
+        >
+          {children}
+        </td>
+      )
+    },
     code({ node, inline, className, children, ...props }) {
       const match = /language-(\w+)/.exec(className || "")
       const codeContent = String(children).replace(/\n$/, "")
